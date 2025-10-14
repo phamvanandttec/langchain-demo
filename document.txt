@@ -1,0 +1,3 @@
+LangChain là một framework được thiết kế để giúp xây dựng các ứng dụng sử dụng mô hình ngôn ngữ (language model) một cách hiệu quả. Nó cung cấp các công cụ và cấu trúc để dễ dàng tích hợp các mô hình ngôn ngữ và
+o trong các tác vụ như tạo nội dung, trả lời câu hỏi, trò chuyện, và nhiều ứng dụng khác. LangChain cho phép người dùng phát triển ứng dụng với khả năng mở rộng và linh hoạt hơn bằng cách kết hợp nhiều thành phần lại vớ
+i nhau, như datasource, các bước xử lý và các mô hình ngôn ngữ.
