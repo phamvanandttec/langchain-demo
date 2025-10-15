@@ -3,7 +3,7 @@ dotenv.config();
 
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { TextLoader } from "langchain/document_loaders/fs/text"; // Ví dụ
-import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
+import { ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 // import { Chroma } from "@langchain/community/vectorstores/chroma";
 import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
 import { ChatOpenAI } from "@langchain/openai";
@@ -75,9 +75,11 @@ const retriever = vectorStore.asRetriever();
 // // // Tạo Retriever để truy xuất tài liệu liên quan
 // const retriever = vectorStore.asRetriever();
 
-const LLM = new ChatOpenAI({
+const LLM = new ChatGoogleGenerativeAI({
     // openAIApiKey:'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',
-    model: 'gpt-4o-mini-2024-07-18'    
+     model: 'gemini-2.5-flash', 
+     apiKey: process.env.GEMINI_API_KEY || 'AIzaSyC3LNv1UUMd0FAIH_Vx2DYffe6s2r6RFHI',
+    temperature: 0.7, // Nhiệt độ tùy chọn
 }); // Mô hình ngôn ngữ lớn
 
 // 1. Prompt để rephrase câu hỏi (tạo ngữ cảnh từ lịch sử)
@@ -120,6 +122,7 @@ const finalChatbot = new RunnableWithMessageHistory({
     }
     return messageHistory[sessionId];
   },
+  outputMessagesKey: "answer", // <-- ADD THIS LINE
   inputMessagesKey: "input", // Key cho input của người dùng
   historyMessagesKey: "chat_history", // Key cho lịch sử chat trong prompt
 });
@@ -127,19 +130,19 @@ const finalChatbot = new RunnableWithMessageHistory({
 // Sử dụng Chatbot
 const sessionId = "user123";
 
-await finalChatbot.invoke(
-  { input: "Tên tôi là gì và nó được dùng để làm gì?" }, // inputMessagesKey = "input"
-  { configurable: { sessionId } }
-);
-    console.log("History for session", sessionId, await messageHistory[sessionId]?.getMessages());
+// await finalChatbot.invoke(
+//   { input: "Tên tôi là gì và nó được dùng để làm gì?" }, // inputMessagesKey = "input"
+//   { configurable: { sessionId } }
+// );
+//     console.log("History for session", sessionId, await messageHistory[sessionId]?.getMessages());
 
 // Lượt 1
 let result = await finalChatbot.invoke(
-  { input: "Tên tôi là An. LangChain là gì?" },
+  { input: "Tên tôi là An. Nodejs là gì?" },
   { configurable: { sessionId } }
 );
 console.log("Lượt 1:", result.answer);
-console.log("History for session", sessionId,await messageHistory[sessionId]?.getMessages());
+// console.log("History for session", sessionId,await messageHistory[sessionId]?.getMessages());
 // Lượt 2 - Hỏi một câu hỏi cần ngữ cảnh
 result = await finalChatbot.invoke(
   { input: "Tên tôi là gì và nó được dùng để làm gì?" },
